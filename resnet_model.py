@@ -21,7 +21,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDis
 from sklearn.utils.class_weight import compute_class_weight
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-from tensorflow.keras.applications import VGG16
+from tensorflow.keras.applications import ResNet101V2
 
 train_dir = 'data/train'
 test_dir = 'data/test'
@@ -60,13 +60,13 @@ test_generator = rescale_datagen.flow_from_directory(test_dir,
                                                      shuffle = False,
                                                      seed = 42)
 
-vgg16file = 'vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5'
-vgg = VGG16(weights='imagenet', include_top=False, input_shape=(350,350,3))
-for layer in vgg.layers:
+# vgg16file = 'vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5'
+resnet = ResNet101V2(weights='imagenet', include_top=False, input_shape=(350,350,3))
+for layer in resnet.layers:
     layer.trainable=False
 
 model3 = Sequential([
-    vgg,
+    resnet,
     Flatten(),
     Dense(units=512, activation='elu'),
     Dense(units=128, activation='elu'),
@@ -84,6 +84,6 @@ logs3 = model3.fit(train_generator,
                    validation_steps=6300/50,
                    callbacks=[callback])
 
-model3.save('Model3.h5')
+model3.save('Model_resnet.h5')
 
 model3.evaluate(test_generator, steps=6300/50)
