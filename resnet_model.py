@@ -5,7 +5,7 @@ import os
 
 # Keras
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, BatchNormalization, Flatten, Dense, LSTM
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, BatchNormalization, Flatten, Dense, LSTM, Bidirectional
 from tensorflow.keras.optimizers.legacy import Adam
 from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 from tensorflow.keras.utils import load_img, img_to_array
@@ -40,28 +40,28 @@ rescale_datagen = ImageDataGenerator(
 )
 train_generator = rescale_datagen.flow_from_directory(train_dir, 
                                                       batch_size = 50, 
-                                                      target_size = (350,350),
+                                                      target_size = (250,250),
                                                       color_mode = "rgb",
                                                       class_mode = "categorical",
                                                       shuffle = True,
                                                       seed = 42)
 valid_generator = rescale_datagen.flow_from_directory(valid_dir,
                                                       batch_size = 50,
-                                                      target_size = (350,350),
+                                                      target_size = (250,250),
                                                       color_mode = "rgb",
                                                       class_mode = "categorical",
                                                       shuffle = True,
                                                       seed = 42)
 test_generator = rescale_datagen.flow_from_directory(test_dir,
                                                      batch_size = 50,
-                                                     target_size = (350,350),
+                                                     target_size = (250,250),
                                                      color_mode = "rgb",
                                                      class_mode = "categorical",
                                                      shuffle = False,
                                                      seed = 42)
 
 # vgg16file = 'vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5'
-resnet = ResNet101V2(weights='imagenet', include_top=False, input_shape=(350,350,3))
+resnet = ResNet101V2(weights='imagenet', include_top=False, input_shape=(250,250,3))
 for layer in resnet.layers:
     layer.trainable=False
 
@@ -69,7 +69,7 @@ model3 = Sequential([
     resnet,
     Flatten(),
     Dense(units=512, activation='elu'),
-    Dense(units=128, activation='elu'),
+    Dense(units=512, activation='elu'),
     Dense(units=2, activation='softmax')
 ])
 
